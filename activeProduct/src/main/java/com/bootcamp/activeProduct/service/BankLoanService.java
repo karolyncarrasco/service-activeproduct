@@ -60,13 +60,13 @@ public class BankLoanService {
                     bankLoan.setPaymentStatus("Pendiente");
                     if(x.getClientType().getDescription().toUpperCase().equals("EMPRESARIAL")){
                         return bankLoanRepository.save(bankLoan)
-                                .flatMap(aa -> schedulePaymentService.create(aa));
+                                .doOnNext(aa -> schedulePaymentService.create(aa));
                     }
                     else{
                         return bankLoanRepository.findTop1ByClientAndPaymentStatus(x, "Pendiente")
                                 .flatMap(y -> Mono.error(new FunctionalException(ErrorMessage.LOAN_RESTRICTION.getValue())))
                                 .switchIfEmpty(Mono.defer(()->bankLoanRepository.save(bankLoan)
-                                        .flatMap(aa -> schedulePaymentService.create(aa))));
+                                        .doOnNext(aa -> schedulePaymentService.create(aa))));
                     }
                 })
                 .switchIfEmpty(Mono.error(new FunctionalException(ErrorMessage.CLIENT_NOT_FOUND.getValue())));

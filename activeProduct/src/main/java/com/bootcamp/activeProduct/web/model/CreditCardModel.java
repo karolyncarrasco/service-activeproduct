@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
@@ -15,7 +16,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreditCardModel {
-    @JsonIgnore
+    @Id
     private String id;
 
     private ClientModel client;

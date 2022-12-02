@@ -35,8 +35,8 @@ public class SchedulePaymentService {
             record.setCreationUser(System.getProperty("user.name"));
             record.setInstallmentNumber(i);
             record.setExpiryDate(bankLoan.getLoanDate().plusMonths(i));
-            schedulePaymentRepository.save(record)
-                    .flatMap(x-> Mono.just(x));
+
+            schedulePaymentRepository.save(record);
         }
         return Mono.just(bankLoan);
     }
