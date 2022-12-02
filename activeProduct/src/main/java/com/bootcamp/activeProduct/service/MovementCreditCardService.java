@@ -1,8 +1,6 @@
 package com.bootcamp.activeProduct.service;
 
-import com.bootcamp.activeProduct.common.ErrorMessage;
 import com.bootcamp.activeProduct.common.FunctionalException;
-import com.bootcamp.activeProduct.domain.BankLoan;
 import com.bootcamp.activeProduct.domain.MovementCreditCard;
 import com.bootcamp.activeProduct.repository.CreditCardRepository;
 import com.bootcamp.activeProduct.repository.MovementCreditCardRepository;
