@@ -1,5 +1,6 @@
 package com.bootcamp.activeProduct.service;
 
+import com.bootcamp.activeProduct.common.FunctionalException;
 import com.bootcamp.activeProduct.domain.Client;
 import com.bootcamp.activeProduct.domain.CreditCard;
 import com.bootcamp.activeProduct.repository.CreditCardRepository;
@@ -7,6 +8,7 @@ import com.bootcamp.activeProduct.web.mapper.CreditCardMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import static com.bootcamp.activeProduct.common.ErrorMessage.CLIENT_NOT_FOUND;
 
 @Slf4j
 @Service
@@ -52,7 +56,7 @@ public class CreditCardService {
                     creditCard.setClient(x);
                     return creditCardRepository.save(creditCard);
                 })
-                .switchIfEmpty(Mono.error(new Exception("No existe cliente")));
+                .switchIfEmpty(Mono.error(new FunctionalException(CLIENT_NOT_FOUND.getValue())));
     }
 
 

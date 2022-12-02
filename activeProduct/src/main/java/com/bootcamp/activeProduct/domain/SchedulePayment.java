@@ -32,7 +32,6 @@ public class SchedulePayment {
     @NotNull
     private Boolean installmentStatus;
 
-    @NotNull
     private LocalDate payDate;
 
     @NotNull
@@ -41,9 +40,7 @@ public class SchedulePayment {
     @NotNull
     private String creationUser;
 
-    @NotNull
     private LocalDate modifiedDate;
 
-    @NotNull
     private String modifiedUser;
 }

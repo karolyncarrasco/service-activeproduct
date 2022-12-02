@@ -5,10 +5,12 @@ import com.bootcamp.activeProduct.common.FunctionalException;
 import com.bootcamp.activeProduct.domain.BankLoan;
 import com.bootcamp.activeProduct.domain.Client;
 import com.bootcamp.activeProduct.repository.BankLoanRepository;
+import com.bootcamp.activeProduct.repository.SchedulePaymentRepository;
 import com.bootcamp.activeProduct.web.mapper.CreditCardMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,9 @@ import java.util.function.Supplier;
 public class BankLoanService {
     @Autowired
     private BankLoanRepository bankLoanRepository;
+
+    @Autowired
+    private SchedulePaymentService schedulePaymentService;
 
     @Autowired
     private CreditCardMapper creditCardMapper;
@@ -53,13 +58,15 @@ public class BankLoanService {
                 .flatMap(x-> {
                     bankLoan.setClient(x);
                     bankLoan.setPaymentStatus("Pendiente");
-                    if(x.getClientType().equals("Empresarial")){
-                        return bankLoanRepository.save(bankLoan);
+                    if(x.getClientType().getDescription().toUpperCase().equals("EMPRESARIAL")){
+                        return bankLoanRepository.save(bankLoan)
+                                .flatMap(aa -> schedulePaymentService.create(aa));
                     }
                     else{
                         return bankLoanRepository.findTop1ByClientAndPaymentStatus(x, "Pendiente")
                                 .flatMap(y -> Mono.error(new FunctionalException(ErrorMessage.LOAN_RESTRICTION.getValue())))
-                                .switchIfEmpty(Mono.defer(()->bankLoanRepository.save(bankLoan)));
+                                .switchIfEmpty(Mono.defer(()->bankLoanRepository.save(bankLoan)
+                                        .flatMap(aa -> schedulePaymentService.create(aa))));
                     }
                 })
                 .switchIfEmpty(Mono.error(new FunctionalException(ErrorMessage.CLIENT_NOT_FOUND.getValue())));
