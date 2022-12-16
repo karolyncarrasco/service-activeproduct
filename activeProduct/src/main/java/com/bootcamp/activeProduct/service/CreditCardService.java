@@ -8,7 +8,6 @@ import com.bootcamp.activeProduct.web.mapper.CreditCardMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -76,4 +75,9 @@ public class CreditCardService {
                 .flatMap(existingCreditCard -> creditCardRepository.delete(existingCreditCard)
                         .then(Mono.just(existingCreditCard)));
     }
+
+    public Mono<CreditCard> findByClient(String identityNumber){
+        return creditCardRepository.findTop1ByClientIdentityNumber(identityNumber);
+    }
+
 }

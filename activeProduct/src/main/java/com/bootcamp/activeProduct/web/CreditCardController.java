@@ -80,4 +80,11 @@ public class CreditCardController {
                 .map( r -> ResponseEntity.ok().<Void>build())
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/findByClient/{identityNumber}")
+    public Mono<ResponseEntity<Mono<CreditCardModel>>> findByClient(@PathVariable String identityNumber){
+        return Mono.just(ResponseEntity.ok()
+                .body(creditCardService.findByClient(identityNumber)
+                        .map(cc -> creditCardMapper.entityToModel(cc))));
+    }
 }
