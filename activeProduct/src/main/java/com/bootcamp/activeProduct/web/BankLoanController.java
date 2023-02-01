@@ -1,6 +1,5 @@
 package com.bootcamp.activeProduct.web;
 
-import com.bootcamp.activeProduct.common.FunctionalException;
 import com.bootcamp.activeProduct.domain.BankLoan;
 import com.bootcamp.activeProduct.service.BankLoanService;
 import com.bootcamp.activeProduct.web.mapper.BankLoanMapper;
@@ -16,6 +15,10 @@ import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.time.Duration;
+
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -34,8 +37,13 @@ public class BankLoanController {
     @Autowired
     private BankLoanMapper bankLoanMapper;
 
+    private static final String RESILIENCE4J_INSTANCE_NAME = "example";
+
+    private static final String FALLBACK_METHOD = "fallback";
 
     @GetMapping()
+    @CircuitBreaker(name = RESILIENCE4J_INSTANCE_NAME, fallbackMethod = FALLBACK_METHOD)
+    @TimeLimiter(name = RESILIENCE4J_INSTANCE_NAME, fallbackMethod = FALLBACK_METHOD)
     public Mono<ResponseEntity<Flux<BankLoanModel>>> getAll(){
         log.info("getAll executed");
         return Mono.just(ResponseEntity.ok()
